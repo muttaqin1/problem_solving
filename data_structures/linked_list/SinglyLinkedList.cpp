@@ -2,31 +2,38 @@
 #include <iostream>
 using namespace std;
 
-class Node {
+class Node
+{
 public:
   int key = 0;
   int data = 0;
   Node *next = nullptr;
   Node() = default;
-  Node(int key, int data) {
+  Node(int key, int data)
+  {
     this->key = key;
     this->data = data;
     this->next = nullptr;
   }
-  ~Node() {
+  ~Node()
+  {
     cout << "Destructure called" << endl;
     delete next;
     this->next = nullptr;
   }
 };
 
-class SinglyLinkedList {
+class SinglyLinkedList
+{
 private:
-  Node *ExistsNode(int key) {
+  Node *ExistsNode(int key)
+  {
     Node *pointer = this->head;
     Node *temp = nullptr;
-    while (pointer != nullptr) {
-      if (pointer->key == key) {
+    while (pointer != nullptr)
+    {
+      if (pointer->key == key)
+      {
         temp = pointer;
         break;
       }
@@ -34,47 +41,71 @@ private:
     }
     return temp;
   };
-  string IsHead(Node *ptr) {
-    if (this->head == ptr) {
+  string IsHead(Node *ptr)
+  {
+    if (this->head == ptr)
+    {
       return "(HEAD)";
-    } else {
+    }
+    else
+    {
       return "";
     }
   };
-  int Count() {
+  int Count()
+  {
     Node *pointer = this->head;
     int count = 0;
-    while (pointer != nullptr) {
+    while (pointer != nullptr)
+    {
       ++count;
       pointer = pointer->next;
     }
     return count;
   }
+  Node *_reverse_node_helper(Node *ptr)
+  {
+    if (!ptr->next)
+    {
+      this->head->next = nullptr;
+      this->head = ptr;
+      return ptr;
+    }
+    return _reverse_node_helper(ptr->next)->next = ptr;
+  }
 
 public:
   Node *head = nullptr;
   SinglyLinkedList() = default;
-  void AppendNode(int key, int data) {
-    if (this->ExistsNode(key) != nullptr) {
+  void AppendNode(int key, int data)
+  {
+    if (this->ExistsNode(key) != nullptr)
+    {
       cout << "A node already exists with this key" << endl;
       return;
     }
     Node *node = new Node(key, data);
-    if (this->head == nullptr) {
+    if (this->head == nullptr)
+    {
       this->head = node;
       cout << "Node appended at position head" << endl;
-    } else {
+    }
+    else
+    {
       Node *pointer = this->head;
-      while (pointer->next != nullptr) {
+      while (pointer->next != nullptr)
+      {
         pointer = pointer->next;
       }
       pointer->next = node;
       cout << "Node appended" << endl;
     }
   };
-  void DisplayNode() {
+  void DisplayNode()
+  {
     Node *pointer = this->head;
-    while (pointer != nullptr) {
+    while (pointer != nullptr)
+    {
       cout << "KEY: " << pointer->key << " "
            << "DATA: " << pointer->data << " "
            << "Address: " << pointer << " "
@@ -84,29 +115,14 @@ public:
     delete pointer;
   }
 
-  void ReverseNode() {
-    if (this->Count() < 2) {
-      cout << "Atleast two node required to reverse the linked list" << endl;
-      return;
-    }
-    Node *prevNode = this->head;
-    Node *nextNode = this->head->next;
-    while (nextNode != nullptr) {
-      Node *temp = nextNode->next;
-      if (prevNode == this->head) {
-        prevNode->next = nullptr;
-      }
-
-      nextNode->next = prevNode;
-
-      prevNode = nextNode;
-      nextNode = temp;
-    }
-    this->head = prevNode;
-    cout << "Nodes reversed" << endl;
+  void reverse_node()
+  {
+    this->_reverse_node_helper(this->head);
   }
-  void PrependNode(int key, int data) {
-    if (this->ExistsNode(key) != nullptr) {
+  void PrependNode(int key, int data)
+  {
+    if (this->ExistsNode(key) != nullptr)
+    {
       cout << "A node already exists with this key" << endl;
       return;
     }
@@ -115,18 +131,22 @@ public:
     this->head = node;
     cout << "Node prepended" << endl;
   }
-  void InsertNode(int index, int key, int data) {
+  void InsertNode(int index, int key, int data)
+  {
     Node *idx = this->ExistsNode(index);
-    if (idx == nullptr) {
+    if (idx == nullptr)
+    {
       cout << "No node exists with this index" << endl;
       return;
     }
-    if (this->ExistsNode(key) != nullptr) {
+    if (this->ExistsNode(key) != nullptr)
+    {
       cout << "A node already exists with this key" << endl;
       return;
     }
     Node *node = new Node(key, data);
-    if (idx->next == nullptr) {
+    if (idx->next == nullptr)
+    {
       idx->next = node;
       cout << "Node inserted" << endl;
       return;
@@ -135,21 +155,28 @@ public:
     idx->next = node;
     cout << "Node inserted" << endl;
   }
-  void DeleteNode(int key) {
+  void DeleteNode(int key)
+  {
     Node *index = this->ExistsNode(key);
-    if (index == nullptr) {
+    if (index == nullptr)
+    {
       cout << "No node exists with this index" << endl;
       return;
     }
-    if (this->head == nullptr) {
+    if (this->head == nullptr)
+    {
       cout << "Head is null" << endl;
       return;
     }
-    if (this->head->key == key) {
-      if (this->head->next == nullptr) {
+    if (this->head->key == key)
+    {
+      if (this->head->next == nullptr)
+      {
         this->head = nullptr;
         cout << "Node unlinked head is null" << endl;
-      } else {
+      }
+      else
+      {
         this->head = this->head->next;
         cout << "Node unlinked" << endl;
       }
@@ -157,10 +184,14 @@ public:
     }
     Node *prevNode = this->head;
     Node *nextNode = this->head->next;
-    while (nextNode != nullptr) {
-      if (nextNode == index) {
+    while (nextNode != nullptr)
+    {
+      if (nextNode == index)
+      {
         break;
-      } else {
+      }
+      else
+      {
         prevNode = prevNode->next;
         nextNode = nextNode->next;
       }
@@ -168,9 +199,11 @@ public:
     prevNode->next = nextNode->next;
     cout << "Node unlinked" << endl;
   }
-  void UpdateNode(int key, int data) {
+  void UpdateNode(int key, int data)
+  {
     Node *index = this->ExistsNode(key);
-    if (index == nullptr) {
+    if (index == nullptr)
+    {
       cout << "No node exists with this key" << endl;
       return;
     }
@@ -179,14 +212,16 @@ public:
   }
 };
 
-int main() {
-  SinglyLinkedList SLL;
-  SLL.AppendNode(1, 10);
-  SLL.AppendNode(2, 20);
-  SLL.AppendNode(3, 30);
-  SLL.AppendNode(4, 40);
-  SLL.AppendNode(5, 50);
-  SLL.AppendNode(6, 60);
-  SLL.DisplayNode();
+int main()
+{
+  SinglyLinkedList sll;
+  sll.AppendNode(1, 10);
+  sll.AppendNode(2, 20);
+  sll.AppendNode(3, 30);
+  sll.AppendNode(4, 40);
+  sll.AppendNode(5, 50);
+  sll.AppendNode(6, 60);
+  sll.reverse_node();
+  sll.DisplayNode();
   return 0;
 }
