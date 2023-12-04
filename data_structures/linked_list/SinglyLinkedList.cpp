@@ -26,21 +26,25 @@ public:
 class SinglyLinkedList
 {
 private:
-  Node *ExistsNode(int key)
+  Node *_exists_node_helper(Node *node, int key)
   {
-    Node *pointer = this->head;
-    Node *temp = nullptr;
-    while (pointer != nullptr)
+    if (node == nullptr)
+      return node;
+    else if (node->key == key)
+      return node;
+    else
+      return _exists_node_helper(node->next, key);
+  }
+  Node *_insert_node_helper(Node *node, Node *new_node, int index)
+  {
+    if (node->key == index)
     {
-      if (pointer->key == key)
-      {
-        temp = pointer;
-        break;
-      }
-      pointer = pointer->next;
+      new_node->next = node->next;
+      return new_node;
     }
-    return temp;
-  };
+    node->next->next = _insert_node_helper(node->next, new_node, index);
+    return node->next;
+  }
   string IsHead(Node *ptr)
   {
     if (this->head == ptr)
@@ -73,13 +77,17 @@ private:
     }
     return _reverse_node_helper(ptr->next)->next = ptr;
   }
+  Node *_exists_node(int key)
+  {
+    return this->_exists_node_helper(this->head, key);
+  };
 
 public:
   Node *head = nullptr;
   SinglyLinkedList() = default;
   void AppendNode(int key, int data)
   {
-    if (this->ExistsNode(key) != nullptr)
+    if (this->_exists_node(key) != nullptr)
     {
       cout << "A node already exists with this key" << endl;
       return;
@@ -121,7 +129,7 @@ public:
   }
   void PrependNode(int key, int data)
   {
-    if (this->ExistsNode(key) != nullptr)
+    if (this->_exists_node(key) != nullptr)
     {
       cout << "A node already exists with this key" << endl;
       return;
@@ -131,33 +139,24 @@ public:
     this->head = node;
     cout << "Node prepended" << endl;
   }
-  void InsertNode(int index, int key, int data)
+  void insert_node(int index, int key, int data)
   {
-    Node *idx = this->ExistsNode(index);
-    if (idx == nullptr)
+    if (this->_exists_node(index) == nullptr)
     {
       cout << "No node exists with this index" << endl;
       return;
     }
-    if (this->ExistsNode(key) != nullptr)
+    if (this->_exists_node(key) != nullptr)
     {
       cout << "A node already exists with this key" << endl;
       return;
     }
     Node *node = new Node(key, data);
-    if (idx->next == nullptr)
-    {
-      idx->next = node;
-      cout << "Node inserted" << endl;
-      return;
-    }
-    node->next = idx->next;
-    idx->next = node;
-    cout << "Node inserted" << endl;
+    this->head->next = this->_insert_node_helper(this->head, node, index);
   }
   void DeleteNode(int key)
   {
-    Node *index = this->ExistsNode(key);
+    Node *index = this->_exists_node(key);
     if (index == nullptr)
     {
       cout << "No node exists with this index" << endl;
@@ -201,7 +200,7 @@ public:
   }
   void UpdateNode(int key, int data)
   {
-    Node *index = this->ExistsNode(key);
+    Node *index = this->_exists_node(key);
     if (index == nullptr)
     {
       cout << "No node exists with this key" << endl;
@@ -221,7 +220,8 @@ int main()
   sll.AppendNode(4, 40);
   sll.AppendNode(5, 50);
   sll.AppendNode(6, 60);
-  sll.reverse_node();
+  sll.insert_node(6, 7, 70);
+  // sll.reverse_node();
   sll.DisplayNode();
   return 0;
 }
