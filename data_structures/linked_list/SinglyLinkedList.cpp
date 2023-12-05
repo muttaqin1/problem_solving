@@ -77,33 +77,23 @@ private:
   {
     return this->_exists_node_helper(this->head, key);
   };
+  Node *_append_node_helper(Node *node, int key, int data)
+  {
+    if (node == nullptr)
+      return new Node(key, data);
+    node->next = _append_node_helper(node->next, key, data);
+    return node;
+  }
 
 public:
   Node *head = nullptr;
   SinglyLinkedList() = default;
-  void AppendNode(int key, int data)
+  void append_node(int key, int data)
   {
-    if (this->_exists_node(key) != nullptr)
-    {
+    if (this->_exists_node(key))
       cout << "A node already exists with this key" << endl;
-      return;
-    }
-    Node *node = new Node(key, data);
-    if (this->head == nullptr)
-    {
-      this->head = node;
-      cout << "Node appended at position head" << endl;
-    }
     else
-    {
-      Node *pointer = this->head;
-      while (pointer->next != nullptr)
-      {
-        pointer = pointer->next;
-      }
-      pointer->next = node;
-      cout << "Node appended" << endl;
-    }
+      this->head = this->_append_node_helper(this->head, key, data);
   };
   void DisplayNode()
   {
@@ -210,12 +200,12 @@ public:
 int main()
 {
   SinglyLinkedList sll;
-  sll.AppendNode(1, 10);
-  sll.AppendNode(2, 20);
-  sll.AppendNode(3, 30);
-  sll.AppendNode(4, 40);
-  sll.AppendNode(5, 50);
-  sll.AppendNode(6, 60);
+  sll.append_node(1, 10);
+  sll.append_node(2, 20);
+  sll.append_node(3, 30);
+  sll.append_node(4, 40);
+  sll.append_node(5, 50);
+  sll.append_node(6, 60);
   sll.insert_node(6, 7, 70);
   // sll.reverse_node();
   sll.DisplayNode();
