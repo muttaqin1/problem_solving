@@ -45,27 +45,23 @@ private:
     node->next->next = _insert_node_helper(node->next, new_node, index);
     return node->next;
   }
-  string IsHead(Node *ptr)
+  string _is_head(Node *ptr)
   {
     if (this->head == ptr)
-    {
       return "(HEAD)";
-    }
     else
-    {
       return "";
-    }
   };
-  int Count()
+  int _count_nodes_helper(Node *node)
   {
-    Node *pointer = this->head;
-    int count = 0;
-    while (pointer != nullptr)
-    {
-      ++count;
-      pointer = pointer->next;
-    }
-    return count;
+    if (node == nullptr)
+      return 0;
+    else
+      return 1 + _count_nodes_helper(node->next);
+  }
+  int _count_nodes(void)
+  {
+    return _count_nodes_helper(this->head);
   }
   Node *_reverse_node_helper(Node *ptr)
   {
@@ -117,7 +113,7 @@ public:
       cout << "KEY: " << pointer->key << " "
            << "DATA: " << pointer->data << " "
            << "Address: " << pointer << " "
-           << "NEXT: " << pointer->next << " " << this->IsHead(pointer) << endl;
+           << "NEXT: " << pointer->next << " " << this->_is_head(pointer) << endl;
       pointer = pointer->next;
     }
     delete pointer;
