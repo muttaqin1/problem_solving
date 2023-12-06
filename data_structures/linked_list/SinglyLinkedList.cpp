@@ -84,6 +84,15 @@ private:
     node->next = _append_node_helper(node->next, key, data);
     return node;
   }
+  Node *_delete_node_helper(Node *node, int key)
+  {
+    if (node == nullptr)
+      return node;
+    else if (node->key == key)
+      return node->next;
+    node->next = _delete_node_helper(node->next, key);
+    return node;
+  }
 
 public:
   Node *head = nullptr;
@@ -113,7 +122,7 @@ public:
   {
     this->_reverse_node_helper(this->head);
   }
-  void PrependNode(int key, int data)
+  void prepend_node(int key, int data)
   {
     if (this->_exists_node(key) != nullptr)
     {
@@ -140,49 +149,9 @@ public:
     Node *node = new Node(key, data);
     this->head->next = this->_insert_node_helper(this->head, node, index);
   }
-  void DeleteNode(int key)
+  void delete_node(int key)
   {
-    Node *index = this->_exists_node(key);
-    if (index == nullptr)
-    {
-      cout << "No node exists with this index" << endl;
-      return;
-    }
-    if (this->head == nullptr)
-    {
-      cout << "Head is null" << endl;
-      return;
-    }
-    if (this->head->key == key)
-    {
-      if (this->head->next == nullptr)
-      {
-        this->head = nullptr;
-        cout << "Node unlinked head is null" << endl;
-      }
-      else
-      {
-        this->head = this->head->next;
-        cout << "Node unlinked" << endl;
-      }
-      return;
-    }
-    Node *prevNode = this->head;
-    Node *nextNode = this->head->next;
-    while (nextNode != nullptr)
-    {
-      if (nextNode == index)
-      {
-        break;
-      }
-      else
-      {
-        prevNode = prevNode->next;
-        nextNode = nextNode->next;
-      }
-    }
-    prevNode->next = nextNode->next;
-    cout << "Node unlinked" << endl;
+    this->head = this->_delete_node_helper(this->head, key);
   }
   void UpdateNode(int key, int data)
   {
@@ -207,6 +176,7 @@ int main()
   sll.append_node(5, 50);
   sll.append_node(6, 60);
   sll.insert_node(6, 7, 70);
+  sll.delete_node(2);
   // sll.reverse_node();
   sll.DisplayNode();
   return 0;
