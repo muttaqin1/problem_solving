@@ -5,20 +5,12 @@ using namespace std;
 class Node
 {
 public:
-  int key = 0;
   int data = 0;
   Node *next = nullptr;
   Node() = default;
-  Node(int key, int data)
+  Node(int data)
   {
-    this->key = key;
     this->data = data;
-    this->next = nullptr;
-  }
-  ~Node()
-  {
-    cout << "Destructure called" << endl;
-    delete next;
     this->next = nullptr;
   }
 };
@@ -26,29 +18,35 @@ public:
 class SinglyLinkedList
 {
 private:
-  Node *_exists_node_helper(Node *node, int key)
+  Node *_exists_node_helper(Node *node, int index)
   {
     if (node == nullptr)
       return node;
-    else if (node->key == key)
+    else if (index == 0)
       return node;
     else
-      return _exists_node_helper(node->next, key);
+      return _exists_node_helper(node->next, index - 1);
   }
   Node *_insert_node_helper(Node *node, Node *new_node, int index)
   {
-    if (node->key == index)
+    if (node == nullptr)
+      return node;
+    else if (index == 0)
     {
-      new_node->next = node->next;
+      new_node->next = node;
       return new_node;
     }
-    node->next->next = _insert_node_helper(node->next, new_node, index);
-    return node->next;
+    node->next = _insert_node_helper(node->next, new_node, index - 1);
+    return node;
   }
-  string _is_head(Node *ptr)
+  string _is_head_or_tail(Node *ptr)
   {
-    if (this->head == ptr)
+    if (this->head == ptr && this->tail == ptr)
+      return "(HEAD & TAIL)";
+    else if (this->head == ptr)
       return "(HEAD)";
+    else if (this->tail == ptr)
+      return "(TAIL)";
     else
       return "";
   };
@@ -59,60 +57,61 @@ private:
     else
       return 1 + _count_nodes_helper(node->next);
   }
-  int _count_nodes(void)
-  {
-    return _count_nodes_helper(this->head);
-  }
+
   Node *_reverse_node_helper(Node *ptr)
   {
     if (!ptr->next)
     {
+      this->tail = this->head;
       this->head->next = nullptr;
       this->head = ptr;
       return ptr;
     }
     return _reverse_node_helper(ptr->next)->next = ptr;
   }
-  Node *_exists_node(int key)
+  Node *_exists_node(int index)
   {
-    return this->_exists_node_helper(this->head, key);
+    return this->_exists_node_helper(this->head, index);
   };
-  Node *_append_node_helper(Node *node, int key, int data)
-  {
-    if (node == nullptr)
-      return new Node(key, data);
-    node->next = _append_node_helper(node->next, key, data);
-    return node;
-  }
-  Node *_delete_node_helper(Node *node, int key)
+
+  Node *_delete_node_helper(Node *node, int index)
   {
     if (node == nullptr)
       return node;
-    else if (node->key == key)
+    else if (index == 0)
       return node->next;
-    node->next = _delete_node_helper(node->next, key);
+    node->next = _delete_node_helper(node->next, index - 1);
     return node;
   }
 
 public:
   Node *head = nullptr;
+  Node *tail = nullptr;
   SinglyLinkedList() = default;
-  void append_node(int key, int data)
+  int size(void)
   {
-    if (this->_exists_node(key))
-      cout << "A node already exists with this key" << endl;
+    return _count_nodes_helper(this->head);
+  }
+  void append_node(int data)
+  {
+    if (this->head == nullptr)
+      this->head = this->tail = new Node(data);
     else
-      this->head = this->_append_node_helper(this->head, key, data);
+    {
+      this->tail->next = new Node(data);
+      this->tail = this->tail->next;
+    }
   };
-  void DisplayNode()
+  void display_node()
   {
     Node *pointer = this->head;
+    int count = 0;
     while (pointer != nullptr)
     {
-      cout << "KEY: " << pointer->key << " "
+      cout << "INDEX: " << count++ << " "
            << "DATA: " << pointer->data << " "
-           << "Address: " << pointer << " "
-           << "NEXT: " << pointer->next << " " << this->_is_head(pointer) << endl;
+           << "ADDRESS: " << pointer << " "
+           << "NEXT: " << pointer->next << " " << this->_is_head_or_tail(pointer) << endl;
       pointer = pointer->next;
     }
     delete pointer;
@@ -122,62 +121,58 @@ public:
   {
     this->_reverse_node_helper(this->head);
   }
-  void prepend_node(int key, int data)
+  void prepend_node(int data)
   {
-    if (this->_exists_node(key) != nullptr)
-    {
-      cout << "A node already exists with this key" << endl;
-      return;
-    }
-    Node *node = new Node(key, data);
+    Node *node = new Node(data);
     node->next = this->head;
     this->head = node;
     cout << "Node prepended" << endl;
   }
-  void insert_node(int index, int key, int data)
+  void insert_node(int index, int data)
   {
     if (this->_exists_node(index) == nullptr)
     {
       cout << "No node exists with this index" << endl;
       return;
     }
-    if (this->_exists_node(key) != nullptr)
-    {
-      cout << "A node already exists with this key" << endl;
-      return;
-    }
-    Node *node = new Node(key, data);
-    this->head->next = this->_insert_node_helper(this->head, node, index);
+    Node *node = new Node(data);
+    this->head = this->_insert_node_helper(this->head, node, index);
   }
-  void delete_node(int key)
+  void delete_node(int index)
   {
-    this->head = this->_delete_node_helper(this->head, key);
+    this->head = this->_delete_node_helper(this->head, index);
   }
-  void UpdateNode(int key, int data)
+  void update_node(int index, int data)
   {
-    Node *index = this->_exists_node(key);
-    if (index == nullptr)
+    Node *node = this->_exists_node(index);
+    if (node == nullptr)
     {
       cout << "No node exists with this key" << endl;
       return;
     }
-    index->data = data;
+    node->data = data;
     cout << "Node updated" << endl;
+  }
+  void take_input(void)
+  {
+    cout << "Enter -1 to stop." << endl;
+    cout << "Enter data:" << endl;
+    while (true)
+    {
+      int data;
+      cin >> data;
+      if (data != -1)
+        this->append_node(data);
+      else
+        break;
+    }
   }
 };
 
 int main()
 {
   SinglyLinkedList sll;
-  sll.append_node(1, 10);
-  sll.append_node(2, 20);
-  sll.append_node(3, 30);
-  sll.append_node(4, 40);
-  sll.append_node(5, 50);
-  sll.append_node(6, 60);
-  sll.insert_node(6, 7, 70);
-  sll.delete_node(2);
-  // sll.reverse_node();
-  sll.DisplayNode();
+  sll.take_input();
+  sll.display_node();
   return 0;
 }
