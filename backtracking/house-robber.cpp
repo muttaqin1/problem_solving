@@ -13,8 +13,6 @@ public:
     };
     int rob(vector<int> nums)
     {
-        vector<int> freq_arr(401, 0);
-        vector<int> temp;
         return this->helper(0, nums.size(), 0, nums);
     }
 };
