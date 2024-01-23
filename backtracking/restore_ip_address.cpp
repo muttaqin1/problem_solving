@@ -27,28 +27,29 @@ public:
 
         return true;
     }
-    void helper(int i, int stop, int max_stop, string s, string temp, vector<string> &res)
+    void helper(int i, int partition, int total_partition, string s, string temp, vector<string> &res)
     {
         if (i >= s.size())
         {
-            if (stop != max_stop)
+            if (partition != total_partition)
                 return;
             temp.pop_back();
             res.push_back(temp);
             return;
         }
-        if (i < s.size() && stop >= max_stop)
+        if (i < s.size() && partition >= total_partition)
             return;
         string current_char = string(1, s[i]);
-        helper(i + 1, stop + 1, max_stop, s, temp + current_char + ".", res);
         for (int j = i + 1; j < s.size(); j++)
         {
             current_char += s[j];
             if (is_valid(current_char))
             {
-                helper(j + 1, stop + 1, max_stop, s, temp + current_char + ".", res);
+                helper(j + 1, partition + 1, total_partition, s, temp + current_char + ".", res);
             }
         }
+
+        helper(i + 1, partition + 1, total_partition, s, temp + current_char + ".", res);
     }
     vector<string> restoreIpAddresses(string s)
     {
